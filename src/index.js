@@ -9,6 +9,17 @@ exports.compress = str => {
     .reduce((pre, curr) => pre + curr[0] + curr.length, '')
 }
 
+const sortQuery = (query) => {
+  return query
+    .split('&')
+    .filter(q => !!q)
+    .sort((a, b) => {
+      const key = str => str.split('=')[0]
+      return key(a) > key(b)
+    })
+    .join('&')
+}
+
 exports.checkURIs = (uri1, uri2) => {
   const uriReg = /^https?:\/\/[^\s\/$.?#].[^\s]*$/i
   if (!uriReg.test(uri1) || !uriReg.test(uri2)) { throw Error('invalid uri') }
@@ -25,7 +36,7 @@ exports.checkURIs = (uri1, uri2) => {
     uri.pathname = utils.normalizePath(uri.pathname)
 
     uri.search = uri.query
-      ? uri.query.split('&').sort().join('&')
+      ? sortQuery(uri.query)
       : null
 
     return decodeURIComponent(utils.urlFormat(uri))

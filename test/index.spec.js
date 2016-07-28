@@ -98,10 +98,24 @@ describe('checkURIs', () => {
     checkURIs(currUri, uriForToken).should.be.false();
   })
 
+  it('should not be equivalent for same key=value with different orders', () => {
+    const currUri = 'http://abc.com/foo.html?a=1&b=2&a=3'
+    const uriForAuth = 'http://abc.com/foo.html?a=3&a=1&b=2'
+
+    checkURIs(currUri, uriForAuth).should.be.false();
+  })
+
   it('should be case-sensitive for auth uri', () => {
     const currUri = 'http://uname:passwd@host.com/foo/bar.html'
     const uriForAuth = 'http://uName:passwd@host.com/foo/bar.html'
 
     checkURIs(currUri, uriForAuth).should.be.false();
+  })
+
+  it('should ignore redundant & sign', () => {
+    const currUri = 'http://abc.com/foo.html?a=1'
+    const uriForAuth = 'http://abc.com/foo.html?a=1&&&&&&'
+
+    checkURIs(currUri, uriForAuth).should.be.true()
   })
 })
